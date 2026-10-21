@@ -15,8 +15,46 @@ using namespace std;
 #define pb push_back
 #define ppb pop_back
 
+const int MAXN = 1000000;
+const int MOD = 998244353;
+
+int fact[MAXN + 1];
+int invFact[MAXN + 1];
+int ans[MAXN + 1];
+
+int power(int base, int exp){
+    int res = 1; 
+    base %= MOD; 
+    while(exp > 0){
+        if(exp % 2 == 1) res = (res * base) % MOD; 
+        base = (base * base) % MOD; 
+        exp /= 2; 
+    }
+    return res; 
+}
+
+int modInverse(int n){
+    return power(n, MOD-2); 
+}
+
 void solve() {
-    
+    fact[0] = 1;
+    invFact[0] = 1; 
+    for(int i = 1; i <= MAXN; i++) fact[i] = (fact[i - 1] * i) % MOD; 
+    invFact[MAXN] = modInverse(fact[MAXN]); 
+    for(int i = MAXN - 1; i >= 1; i--) invFact[i] = (invFact[i + 1] * (i + 1)) % MOD; 
+
+    ans[0] = 0; 
+    for(int i = 1; i <= MAXN; i++){
+        int g; 
+        if(i % 2 != 0) g = 1; 
+        else{
+            int k = i / 2; 
+            int binom = fact[i] * invFact[k] % MOD * invFact[k] % MOD; 
+            g = binom ^ 1; 
+        }
+        ans[i] = ans[i - 1] ^ g; 
+    }
 }
 
 int32_t main() {
@@ -24,9 +62,12 @@ int32_t main() {
     cin.tie(nullptr);
     cout.tie(nullptr);
 
+    solve();
     int t; cin >> t;
     while (t--) {
-        solve();
+        
+        read(n); 
+        cout << ans[n] << nn; 
     }
     return 0;
 }
